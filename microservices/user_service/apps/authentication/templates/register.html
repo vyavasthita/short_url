@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.first_name.label }} {{ form.first_name }}
+            <br>
+        </p>
+        <p>
+            {{ form.last_name.label }} {{ form.last_name }}
+            <br>
+        </p>
+        <p>
+            {{ form.email.label }} {{ form.email }}
+            <br>
+        </p>
+        <p>
+            {{ form.password.label }} {{ form.password }}
+            <br>
+        </p>
+        <p>
+            {{ form.password_repeat.label }} {{ form.password_repeat }}
+            <br>
+        </p>
+        <p>
+            {{ form.submit() }}
+            <br>
+        </p>
+    </form>
+</h1>
+{% endblock %}

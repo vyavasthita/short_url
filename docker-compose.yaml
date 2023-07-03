@@ -1,0 +1,66 @@
+version: '3'
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    ports:
+      - "6380:6379"
+  rabbitmq:
+    image: rabbitmq:latest
+    container_name: rabbitmq
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - "5673:5672"
+  mysql-db:
+    image: mysql:8.0.29
+    container_name: mysql-db
+    ports:
+      - "3308:3306"
+    environment:
+      - MYSQL_DATABASE=shortner
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    command: --init-file /data/application/init.sql
+    volumes:
+      - ./database/sqls/init.sql:/data/application/init.sql
+      - ./database/data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 3s
+      retries: 5
+  db-admin:
+    image: phpmyadmin:latest
+    container_name: mysql-db-admin
+    restart: always
+    environment:
+      PMA_HOST: mysql-db
+      PMA_USER: root
+    ports:
+      - "8080:80"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+  user:
+    build: ./microservices/user_service
+    container_name: user_service
+    env_file:
+      - ./microservices/user_service/.env.dev
+      - ./microservices/user_service/.env.aut_test
+    ports:
+      - 5001:5001
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy

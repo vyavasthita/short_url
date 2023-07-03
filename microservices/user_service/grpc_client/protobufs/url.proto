@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+service UrlShortner {
+  rpc GetShortUrl(Long) returns (Short) {}
+}
+
+message Long {
+  string long_url = 1;
+}
+
+message Short {
+  string short_url = 1;
+}
