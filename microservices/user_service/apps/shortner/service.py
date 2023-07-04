@@ -1,6 +1,6 @@
 import grpc
-from grpc_client import url_pb2
-from grpc_client import url_pb2_grpc
+from grpc_connection import url_pb2
+from grpc_connection import url_pb2_grpc
 from apps import configuration
 from utils.response import Response
 

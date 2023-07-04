@@ -15,27 +15,27 @@ ENV PYTHONUNBUFFERED 1
 
 EXPOSE 5001
 
-COPY requirements.txt .
+COPY ./user_service/requirements.txt .
 RUN pip install --no-cache-dir --upgrade -r requirements.txt
 RUN pip install mysqlclient
 
 ARG DB_TYPE=MYSQL
 ENV DB_TYPE=${DB_TYPE}
 
-COPY ./apps /app/apps
-COPY ./migrations /app/migrations
-COPY ./utils /app/utils
-COPY entrypoint.sh .
-COPY wsgi.py .
+# Copy grpc related files
+COPY ./grpc /app/grpc_connection
+
+COPY ./user_service/apps /app/apps
+COPY ./user_service/migrations /app/migrations
+COPY ./user_service/utils /app/utils
+COPY ./user_service/docker-entrypoint.sh .
+COPY ./user_service/wsgi.py .
 
 # Copy files for unit tests
-COPY ./tests /app/tests
-COPY pytest.ini .
-COPY .coveragerc .
+COPY ./user_service/tests /app/tests
+COPY ./user_service/pytest.ini .
+COPY ./user_service/.coveragerc .
 
-# Copy grpc related files
-COPY ./grpc_client /app/grpc_client
+RUN chmod +x ./docker-entrypoint.sh
 
-RUN chmod +x ./entrypoint.sh
-
-ENTRYPOINT ["sh", "entrypoint.sh"]
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]

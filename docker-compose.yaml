@@ -52,7 +52,9 @@ services:
       mysql-db:
         condition: service_healthy
   user:
-    build: ./microservices/user_service
+    build:
+      context: ./microservices
+      dockerfile: user_service/Dockerfile
     container_name: user_service
     env_file:
       - ./microservices/user_service/.env.dev
@@ -63,4 +65,16 @@ services:
       mysql-db:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+  shortner:
+    build:
+      context: ./microservices
+      dockerfile: shortner_service/Dockerfile
+    container_name: shortner_service
+    env_file:
+      - ./microservices/shortner_service/.env.dev
+    ports:
+      - 5003:5003
+    depends_on:
+      mysql-db:
         condition: service_healthy

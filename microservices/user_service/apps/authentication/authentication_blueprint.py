@@ -5,7 +5,10 @@ from apps.authentication.service import AuthenticationService
 
 
 authentication_blueprint = Blueprint(
-    "authentication", __name__, template_folder="templates", url_prefix="/api/authentication"
+    "authentication",
+    __name__,
+    template_folder="templates",
+    url_prefix="/api/authentication",
 )
 
 
